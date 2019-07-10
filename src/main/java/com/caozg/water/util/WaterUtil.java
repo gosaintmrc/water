@@ -1,5 +1,6 @@
 package com.caozg.water.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 public class WaterUtil {
     //?date=2019-07-10+08%3A00
-    public static String httpGet(String url,String param) throws IOException {
+    public static Document httpGet(String url,String param) throws IOException {
         //获取请求连接
         Connection conn = Jsoup.connect(url).ignoreContentType(true);
         //请求头设置，特别是cookie设置
@@ -27,15 +28,15 @@ public class WaterUtil {
         conn.data("date",param);
         //获取请求结果
         Document doc = conn.get();
-        Element body = doc.body();
-        String text = body.text();
-        return text;
+        return doc;
     }
 
     public static void main(String[] args) {
         try {
-            String s = httpGet("http://113.57.190.228:8001/Web/Report/GetRiverData","2019-07-10 08:00");
-            System.out.println(s);
+            Document document = httpGet("http://113.57.190.228:8001/Web/Report/GetRiverData", "2019-07-10 08:00");
+            JSONObject obj = (JSONObject)JSONObject.parse(document.body().text());
+
+            System.out.println(obj);
         } catch (IOException e) {
             e.printStackTrace();
         }
